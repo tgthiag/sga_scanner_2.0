@@ -2,7 +2,6 @@ import 'dart:io';
 import 'package:flutter/services.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 
@@ -14,18 +13,11 @@ var col_CODIGO = "codigo";
 var col_SET = "cod_set";
 
 class DatabaseHelper {
-
-  static final columnId = '_id';
-  static final columnNome = 'nome';
-  static final columnIdade = 'idade';
-
   // torna esta classe singleton
   DatabaseHelper._privateConstructor();
   static final DatabaseHelper instance = DatabaseHelper._privateConstructor();
-  // // tem somente uma referência ao banco de dados
-  // static Database? _database;
-
   Future<Database?> get database async {
+    //Se a plataforma for Desktop:
     if (Platform.isWindows || Platform.isLinux) {
       sqfliteFfiInit();
 
@@ -37,35 +29,13 @@ class DatabaseHelper {
       // Verifica se a database existe
       var exists = await databaseExists(path);
 
-      if (!exists) {
-        // Should happen only the first time you launch your application
-        print("Creating new copy from asset");
-
-
-        // Make sure the parent directory exists
-        try {
-          await Directory(dirname(path)).create(recursive: true);
-        } catch (_) {}
-
-        // Copy from asset
-        ByteData data = await rootBundle.load(
-            join("assets", "barcode-barcode.db"));
-        List<int> bytes =
-        data.buffer.asUint8List(data.offsetInBytes, data.lengthInBytes);
-
-        // Write and flush the bytes written
-        await File(path).writeAsBytes(bytes, flush: true);
-      } else {
-        print("Opening existing database");
-        print("from desktop");
-      }
-
-// open the database
-      var db = await databaseFactory.openDatabase(path);
+      // Abre a database
+      var db = await databaseFactory.openDatabase(join(dirname(Platform.script.toFilePath()),"assets", "barcode-barcode.db"));
+      print(join(dirname(Platform.script.toFilePath()),"assets", "barcode-barcode.db"));
       return db;
     }
 
-
+    //Se a plataforma for Mobile:
     if (Platform.isAndroid || Platform.isIOS) {
       var databasesPath = await getDatabasesPath();
       var path = join(databasesPath, "barcode.db");
@@ -75,16 +45,12 @@ class DatabaseHelper {
       var exists = await databaseExists(path);
 
       if (!exists) {
-        // Should happen only the first time you launch your application
         print("Creating new copy from asset");
-
-
-        // Make sure the parent directory exists
+        // Verificando se o diretório existe
         try {
           await Directory(dirname(path)).create(recursive: true);
         } catch (_) {}
 
-        // Copy from asset
         ByteData data = await rootBundle.load(
             join("assets", "barcode-barcode.db"));
         List<int> bytes =
@@ -94,7 +60,7 @@ class DatabaseHelper {
         await File(path).writeAsBytes(bytes, flush: true);
       } else {
         print("Opening existing database");
-        print("From smartphone");
+        print("From mobile");
       }
 
 // open the database
@@ -124,16 +90,4 @@ class DatabaseHelper {
     Database? db = await instance.database;
     return Sqflite.firstIntValue(await db!.rawQuery('SELECT COUNT(*) FROM "$TABLE_NAME" where "$col_CODIGO" = "${codigo.trim()}" or "$col_MATERIAL" = "${codigo.trim()}"'));
   }
-
-  // Future<int?> update(Map<String, dynamic> row) async {
-  //   Database? db = await instance.database;
-  //   int id = row[columnId];
-  //   return await db?.update(TABLE_NAME, row, where: '$columnId = ?', whereArgs: [id]);
-  // }
-  // Exclui a linha especificada pelo id. O número de linhas afetadas é
-  // retornada. Isso deve ser igual a 1, contanto que a linha exista.
-  // Future<int?> delete(int id) async {
-  //   Database? db = await instance.database;
-  //   return await db?.delete(TABLE_NAME, where: '$columnId = ?', whereArgs: [id]);
-  // }
 }

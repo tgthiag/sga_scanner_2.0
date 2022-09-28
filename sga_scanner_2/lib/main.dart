@@ -4,9 +4,11 @@ import 'package:flutter/services.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:sga_scanner_2/dbHelper.dart';
 import 'package:sga_scanner_2/resultsScreen.dart';
+import 'package:path/path.dart';
 
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
   runApp(MyTest());
 }
 
@@ -28,14 +30,13 @@ class MainActivity extends State<MyTest> {
     super.initState();
   }
 
-//EM IMPLANTAÇÃO, ESTA FUNÇÃO IRÁ VERIFICAR SE O CÓDIGO ESTÁ CORRETO, SEM PUXAR AS INFORMAÇÕES PARA A TELA
+//Para futuro desenvolvimento, ESTA FUNÇÃO IRÁ VERIFICAR SE O CÓDIGO ESTÁ CORRETO, SEM PUXAR AS INFORMAÇÕES PARA A TELA
   Future<void> startBarcodeScanStream() async{
     FlutterBarcodeScanner.getBarcodeStreamReceiver('#ff6666', "Cancelar", true, ScanMode.BARCODE)!.listen((barcode) => print(barcode));
     // sqliteDB;
   }
 
 //ESTA FUNÇÃO PUXA AS INFORMAÇÕES DO PRODUTO ESCANEADO PARA CONFERÊNCIA.
-
   Future<void> scanBarcodeNormal(BuildContext context) async {
     String barcodeScan;
     // sqliteDB;
@@ -45,7 +46,6 @@ class MainActivity extends State<MyTest> {
 
       String barcodeScanRes = (await _qtdRows(barcodeScan.trim()) != 0) ? barcodeScan.trim() : barcodeScan.substring(1).trim();
       carregarDados(context, barcodeScanRes.trim());
-
     } on PlatformException {
       barcodeScan = 'Um erro ocorreu.';
     }
@@ -57,6 +57,7 @@ class MainActivity extends State<MyTest> {
 
   }
   Future<void> carregarDados(BuildContext context,String barcodeScanRes) async {
+
     try {
       final db = (Platform.isWindows || Platform.isLinux) ? await dbWindows
           .database : await dbHelper.database;
@@ -122,11 +123,11 @@ class MainActivity extends State<MyTest> {
     return MaterialApp(
         home: Scaffold(
             appBar: AppBar(title: const Text('SGA Scanner')),
-    bottomNavigationBar: BottomAppBar(
-      color: Colors.blue[100],
-      child: Text('Desenvolvido por: Thiago Carvalho\n Versão: 2.10',textAlign: TextAlign.center),
-      elevation: 0,
-    ),
+            bottomNavigationBar: BottomAppBar(
+              color: Colors.blue[100],
+              child: Text('Desenvolvido por: Thiago Carvalho\n Versão: 2.10',textAlign: TextAlign.center),
+              elevation: 0,
+            ),
             body: Builder(builder: (BuildContext context) {
               return Container(
                   alignment: Alignment.center,

@@ -8,9 +8,7 @@ class ResultsScreen extends StatelessWidget{
   late final String? CJ;
   late final String? CX;
   ResultsScreen(this.material, this.nome, this.PC, this.CJ, this.CX);
-
   final dbHelper = DatabaseHelper.instance;
-
 
   @override
   Widget build(BuildContext context) {
@@ -40,13 +38,8 @@ class ResultsScreen extends StatelessWidget{
             Text("Pacote / Caixa:", style: TextStyle(fontWeight: FontWeight.bold,color: Colors.blue,fontSize: 32)),
             Text("$CX",style: TextStyle(fontWeight: FontWeight.bold,fontSize: 24),),
           ],
-
         ),
       ),
     );
   }
-
-
-
-
 }
