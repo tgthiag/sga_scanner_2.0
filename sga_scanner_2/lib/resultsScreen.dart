@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:sga_scanner_2/dbHelper.dart';
+import 'package:sga_scanner_2/db_helper.dart';
 
 class ResultsScreen extends StatelessWidget{
   late final String? material;

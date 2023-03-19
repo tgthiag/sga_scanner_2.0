@@ -5,8 +5,8 @@ import 'package:sqflite/sqflite.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 
-final DATABASE_NAME = "barcode.db";
-final TABLE_NAME = "barcode-query-results";
+const DATABASE_NAME = "barcode.db";
+const TABLE_NAME = "barcode-query-results";
 var col_MATERIAL = "material";
 var col_NOME = "nome";
 var col_CODIGO = "codigo";
